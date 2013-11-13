@@ -1,0 +1,79 @@
+# 
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "error:production.bom.open_versions:"
+msgid "%s's versions"
+msgstr "Versiones de %s"
+
+msgctxt "error:production.bom:"
+msgid ""
+"Invalid dates for version \"%(bom)s\". They overlap with version "
+"\"%(version)s."
+msgstr ""
+"Dates invàlides per la versió \"%(bom)s\". Se solapen amb la versió "
+"\"%(version)s\"."
+
+msgctxt "error:production.bom:"
+msgid "Version Must be unique per BOM"
+msgstr "La versió ha de ser única per llista de materials"
+
+msgctxt "field:production.bom,end_date:"
+msgid "End Date"
+msgstr "Data final"
+
+msgctxt "field:production.bom,master_bom:"
+msgid "BOM"
+msgstr "Llistes de materials"
+
+msgctxt "field:production.bom,start_date:"
+msgid "Start Date"
+msgstr "Data inicial"
+
+msgctxt "field:production.bom,version:"
+msgid "Version"
+msgstr "Versió"
+
+msgctxt "field:production.bom.new.version.start,date:"
+msgid "Date"
+msgstr "Data"
+
+msgctxt "field:production.bom.new.version.start,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "model:ir.action,name:act_version_list"
+msgid "BOMs Versions"
+msgstr "Versions de llista de materials"
+
+msgctxt "model:ir.action,name:wizard_bom_versions"
+msgid "Versions"
+msgstr "Versions"
+
+msgctxt "model:ir.action,name:wizard_new_version"
+msgid "New Version"
+msgstr "Nova versió"
+
+msgctxt "model:ir.ui.menu,name:menu_version_list"
+msgid "BOMs Versions"
+msgstr "Versions de llista de materials"
+
+msgctxt "model:production.bom.new.version.start,name:"
+msgid "New Version Start"
+msgstr "Inici nova versió"
+
+msgctxt "view:production.bom.new.version.start:"
+msgid "Create New BOM version"
+msgstr "Crea una nova versió de la llista de materials"
+
+msgctxt "view:production.bom.new.version.start:"
+msgid "Enter the date which new version will be effective:"
+msgstr "Introdueix la data en que la nova versió serà efectiva:"
+
+msgctxt "wizard_button:production.bom.new.version,start,create_:"
+msgid "Create"
+msgstr "Crea"
+
+msgctxt "wizard_button:production.bom.new.version,start,end:"
+msgid "Cancel"
+msgstr "Cancel·la"

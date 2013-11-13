@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <record model="ir.ui.view" id="bom_view_form">
+            <field name="model">production.bom</field>
+            <field name="type">form</field>
+            <field name="name">bom_form</field>
+            <field name="inherit" ref="production.bom_view_form"/>
+        </record>
+        <record model="ir.ui.view" id="bom_view_list">
+            <field name="model">production.bom</field>
+            <field name="type">tree</field>
+            <field name="name">bom_list</field>
+            <field name="inherit" ref="production.bom_view_list"/>
+        </record>
+
+        <record model="ir.action.act_window" id="act_version_list">
+            <field name="name">BOMs Versions</field>
+            <field name="res_model">production.bom</field>
+            <field name="context">{'show_versions': True}</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_version_list_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="production.bom_view_list"/>
+            <field name="act_window" ref="act_version_list"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_version_list_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="production.bom_view_form"/>
+            <field name="act_window" ref="act_version_list"/>
+        </record>
+        <menuitem id="menu_version_list" sequence="10"
+            parent="production.menu_bom_list" action="act_version_list" />
+
+
+        <record model="ir.action.wizard" id="wizard_bom_versions">
+            <field name="name">Versions</field>
+            <field name="wiz_name">production.bom.open_versions</field>
+        </record>
+        <record model="ir.action.keyword" id="act_bom_open_keyword1">
+            <field name="keyword">form_relate</field>
+            <field name="model">production.bom,-1</field>
+            <field name="action" ref="wizard_bom_versions"/>
+        </record>
+
+        <record model="ir.ui.view" id="new_version_start_form">
+            <field name="model">production.bom.new.version.start</field>
+            <field name="type">form</field>
+            <field name="name">new_version_form</field>
+        </record>
+
+        <record model="ir.action.wizard" id="wizard_new_version">
+            <field name="name">New Version</field>
+            <field name="wiz_name">production.bom.new.version</field>
+        </record>
+        <record model="ir.action.keyword" id="act_bom_open_keyword2">
+            <field name="keyword">form_action</field>
+            <field name="model">production.bom,-1</field>
+            <field name="action" ref="wizard_new_version"/>
+        </record>
+
+    </data>
+</tryton>
