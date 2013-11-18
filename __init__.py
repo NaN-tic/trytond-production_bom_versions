@@ -9,8 +9,8 @@ def register():
     Pool.register(
         BOM,
         NewVersionStart,
-        module='production_bom_history', type_='model')
+        module='production_bom_versions', type_='model')
     Pool.register(
         OpenVersions,
         NewVersion,
-        module='production_bom_history', type_='wizard')
+        module='production_bom_versions', type_='wizard')

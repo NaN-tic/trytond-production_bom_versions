@@ -22,13 +22,13 @@ class TestCase(unittest.TestCase):
     '''
 
     def setUp(self):
-        trytond.tests.test_tryton.install_module('production_bom_history')
+        trytond.tests.test_tryton.install_module('production_bom_versions')
 
     def test0005views(self):
         '''
         Test views.
         '''
-        test_view('production_bom_history')
+        test_view('production_bom_versions')
 
     def test0006depends(self):
         '''

@@ -6,7 +6,7 @@ import re
 import os
 import ConfigParser
 
-MODULE = 'production_bom_history'
+MODULE = 'production_bom_versions'
 PREFIX = 'nantic'
 MODULE2PREFIX = {}
 

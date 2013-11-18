@@ -9,5 +9,7 @@ this repository contains the full copyright notices and license terms. -->
         <field name="end_date"/>
         <label name="version"/>
         <field name="version"/>
+        <label name="master_bom"/>
+        <field name="master_bom"/>
     </xpath>
 </data>

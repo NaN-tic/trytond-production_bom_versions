@@ -20,15 +20,17 @@ class BOM:
     start_date = fields.Date('Start Date', required=True)
     end_date = fields.Date('End Date')
     version = fields.Integer('Version', readonly=True)
-    master_bom = fields.Many2One('production.bom', 'BOM')
+    master_bom = fields.Many2One('production.bom', 'BOM', readonly=True)
 
     @classmethod
     def __setup__(cls):
         super(BOM, cls).__setup__()
         cls._sql_constraints += [
-                ('report_code_uniq', 'unique (master_bom,version)',
-                'Version Must be unique per BOM')
-            ]
+            ('report_code_uniq', 'unique (master_bom,version)',
+                'Version Must be unique per BOM'),
+            ('end_date_check', 'CHECK (end_date IS NULL or end_date > '
+                'start_date)', 'End date must be greater than start date'),
+        ]
         cls._error_messages.update({
                 'invalid_dates': 'Invalid dates for version "%(bom)s". They '
                     'overlap with version "%(version)s.',
@@ -36,39 +38,13 @@ class BOM:
 
     @staticmethod
     def default_version():
-        pool = Pool()
-        Bom = pool.get('production.bom')
-        master_bom = Transaction().context.get('master_bom')
-        if master_bom:
-            bom = Bom.get_last_version(master_bom)
-            return bom.version + 1
         return 1
 
     @staticmethod
-    def default_master_bom():
-        return Transaction().context.get('master_bom')
-
-    @staticmethod
     def default_start_date():
-        return datetime.date.today()
-
-    @staticmethod
-    def excluded_version_fields():
-        return ['id', 'create_uid', 'create_date', 'write_uid', 'write_date',
-            'output_products', 'rec_name', 'master_bom', 'version',
-            'start_date']
-
-    @classmethod
-    def default_get(cls, fields_names, with_rec_name=True):
-        context = Transaction().context
-        defaults = super(BOM, cls).default_get(fields_names, with_rec_name)
-        for name in fields_names:
-            if name not in cls.excluded_version_fields():
-                context_name = 'master_bom_' + name
-                value = context.get(context_name)
-                if value:
-                    defaults[name] = value
-        return defaults
+        pool = Pool()
+        Date = pool.get('ir.date')
+        return Date.today()
 
     @classmethod
     def get_last_version(cls, master_bom):
@@ -84,65 +60,47 @@ class BOM:
         if boms:
             return boms[0]
 
-    def check_dates(self):
-        if not self.master_bom:
-            return
-        with Transaction().set_context(show_versions=True):
-            boms = self.search([
-                    ('master_bom', '=', self.master_bom.id),
-                    ('id', '!=', self.id),
-                ])
-            for bom in boms:
-                if (bom.end_date and self.start_date < bom.end_date) or \
-                        (self.end_date and self.end_date < bom.start_date):
-                    self.raise_user_error('invalid_dates', {
-                                'bom': self.rec_name,
-                                'version': bom.version,
-                            })
-
     @classmethod
     def validate(cls, boms):
         super(BOM, cls).validate(boms)
         for bom in boms:
             bom.check_dates()
 
+    def check_dates(self):
+        if not self.master_bom:
+            return
+        with Transaction().set_context(show_versions=True):
+            domain = [
+                ('master_bom', '=', self.master_bom.id),
+                ('id', '!=', self.id),
+            ]
+            if not self.end_date:
+                if not self.end_date:
+                    domain.append(['OR', [
+                                    ('end_date', '=', None),
+                                ], [
+                                    ('end_date', '>', self.start_date),
+                                ]
+                            ])
+                else:
+                    domain.append(('start_date', '<', self.end_date))
+                    domain.append(['OR', [
+                                        ('end_date', '=', None),
+                                    ], [
+                                        ('end_date', '>', self.start_date),
+                                    ]
+                                ])
+            with Transaction().set_context(show_versions=True):
+                boms = self.search(domain, limit=1)
+                if boms:
+                    self.raise_user_error('invalid_dates', {
+                                'bom': self.rec_name,
+                                'version': boms[0].version,
+                            })
+
     @classmethod
     def create(cls, vlist):
-        pool = Pool()
-        Inputs = pool.get('production.bom.input')
-        Outputs = pool.get('production.bom.output')
-        context = Transaction().context
-
-        inputs_to_copy = {}
-        outputs_to_copy = {}
-
-        if not context.get('new_version', False):
-            for value in vlist:
-                master_bom = value.get('master_bom', context.get('master_bom'))
-                if master_bom:
-                    value['master_bom'] = master_bom
-                    bom = cls.get_last_version(master_bom)
-                    if bom:
-                        value['version'] = bom.version + 1
-                        date = value.get('start_date', datetime.date.today())
-                        cls.write([bom], {'end_date': date})
-                        for field in ('inputs', 'outputs'):
-                            if field in value:
-                                if field == 'inputs':
-                                    save = inputs_to_copy
-                                else:
-                                    save = outputs_to_copy
-                                for key in value[field]:
-                                    if not key[0] == 'add':
-                                        continue
-                                save[bom.id] = key[1]
         boms = super(BOM, cls).create(vlist)
-        for bom, ids in inputs_to_copy.iteritems():
-            ins = Inputs.browse(ids)
-            Inputs.copy(ins, {'bom': bom})
-        for bom, ids in outputs_to_copy.iteritems():
-            ins = Outputs.browse(ids)
-            Outputs.copy(ins, {'bom': bom})
         for bom in boms:
             if not bom.master_bom:
                 bom.master_bom = bom
@@ -153,6 +111,9 @@ class BOM:
     def copy(cls, boms, default=None):
         if default is None:
             default = {}
+        else:
+            default = default.copy()
+
         if not Transaction().context.get('new_version', False):
             default['master_bom'] = None
             return super(BOM, cls).copy(boms, default=default)
@@ -167,13 +128,15 @@ class BOM:
     @classmethod
     def search(cls, args, offset=0, limit=None, order=None, count=False,
             query=False):
+        pool = Pool()
+        Date = pool.get('ir.date')
         transaction = Transaction()
         context = transaction.context
         cursor = transaction.cursor
 
         if not context.get('show_versions', False):
             table = cls.__table__()
-            today = datetime.date.today()
+            today = Date.today()
 
             q = table.select(table.id, where=(table.start_date <= today) &
                 (Literal(today) <= Coalesce(table.end_date, datetime.date.max)))
@@ -203,7 +166,9 @@ class NewVersionStart(ModelView):
 
     @staticmethod
     def default_date():
-        return datetime.date.today()
+        pool = Pool()
+        Date = pool.get('ir.date')
+        return Date.today()
 
 
 class NewVersion(Wizard):
@@ -211,7 +176,7 @@ class NewVersion(Wizard):
     __name__ = 'production.bom.new.version'
 
     start = StateView('production.bom.new.version.start',
-        'production_bom_history.new_version_start_form', [
+        'production_bom_versions.new_version_start_form', [
             Button('Cancel', 'end', 'tryton-cancel'),
             Button('Create', 'create_', 'tryton-go-next', default=True),
             ])
@@ -259,20 +224,8 @@ class OpenVersions(Wizard):
         action['pyson_domain'] = encoder.encode(
             [('master_bom', '=', bom.master_bom.id)])
         action['pyson_order'] = encoder.encode([('version', 'DESC')])
-        context = {'show_versions': True, 'master_bom': bom.master_bom.id}
+        context = {'show_versions': True}
         bom = Bom.get_last_version(bom.master_bom.id)
-        if bom:
-            for name, field in Bom._fields.iteritems():
-                if name not in Bom.excluded_version_fields():
-                    value = getattr(bom, name)
-                    if field._type in ('many2one',) and value:
-                        value = value.id
-                    if field._type in ('one2many', 'many2many') and value:
-                        values = [r.id for r in value]
-                        value = values
-
-                    context['master_bom_' + name] = value
-
         action['pyson_context'] = encoder.encode(context)
 
         action['name'] += ' - %s' % (self.raise_user_error(error='versions',
