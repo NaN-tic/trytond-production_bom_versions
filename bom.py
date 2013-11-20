@@ -75,21 +75,20 @@ class BOM:
                 ('id', '!=', self.id),
             ]
             if not self.end_date:
-                if not self.end_date:
-                    domain.append(['OR', [
+                domain.append(['OR', [
+                                ('end_date', '=', None),
+                            ], [
+                                ('end_date', '>', self.start_date),
+                            ]
+                        ])
+            else:
+                domain.append(('start_date', '<', self.end_date))
+                domain.append(['OR', [
                                     ('end_date', '=', None),
                                 ], [
                                     ('end_date', '>', self.start_date),
                                 ]
                             ])
-                else:
-                    domain.append(('start_date', '<', self.end_date))
-                    domain.append(['OR', [
-                                        ('end_date', '=', None),
-                                    ], [
-                                        ('end_date', '>', self.start_date),
-                                    ]
-                                ])
             with Transaction().set_context(show_versions=True):
                 boms = self.search(domain, limit=1)
                 if boms:
@@ -149,12 +148,12 @@ class BOM:
 
     @classmethod
     def new_version(cls, boms, date):
+        cls.write(boms, {'end_date': date - datetime.timedelta(days=1)})
         with Transaction().set_context(new_version=True):
             new_boms = cls.copy(boms, {
                     'end_date': None,
                     'start_date': date
                 })
-        cls.write(boms, {'end_date': date})
         return new_boms
 
 
