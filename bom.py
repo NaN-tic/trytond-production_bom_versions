@@ -1,5 +1,5 @@
-#The COPYRIGHT file at the top level of this repository contains the full
-#copyright notices and license terms.
+# The COPYRIGHT file at the top level of this repository contains the full
+# copyright notices and license terms.
 import datetime
 from sql import Literal
 from sql.conditionals import Coalesce
@@ -7,10 +7,11 @@ from sql.conditionals import Coalesce
 from trytond.model import ModelView, fields
 from trytond.wizard import Wizard, StateView, Button, StateAction
 from trytond.transaction import Transaction
-from trytond.pyson import PYSONEncoder
+from trytond.pyson import PYSONEncoder, Bool, Eval, If
 from trytond.pool import Pool, PoolMeta
 
-__all__ = ['BOM', 'NewVersionStart', 'NewVersion', 'OpenVersions']
+__all__ = ['BOM', 'Production',
+    'NewVersionStart', 'NewVersion', 'OpenVersions']
 __metaclass__ = PoolMeta
 
 
@@ -136,7 +137,8 @@ class BOM:
 
         if not context.get('show_versions', False):
             table = cls.__table__()
-            today = Date.today()
+            today = (context['production_date']
+                if context.get('production_date') else Date.today())
 
             q = table.select(table.id, where=(table.start_date <= today) &
                 (Literal(today) <= Coalesce(table.end_date, datetime.date.max)))
@@ -156,6 +158,22 @@ class BOM:
                     'start_date': date
                 })
         return new_boms
+
+
+class Production:
+    __name__ = 'production'
+
+    @classmethod
+    def __setup__(cls):
+        super(Production, cls).__setup__()
+        if 'production_date' not in cls.bom.context:
+            cls.bom.context['production_date'] = If(
+                Bool(Eval('effective_date')),
+                Eval('effective_date'),
+                Eval('planned_date'))
+        for fname in ('effective_date', 'planned_date'):
+            if fname not in cls.bom.depends:
+                cls.bom.depends.append(fname)
 
 
 class NewVersionStart(ModelView):

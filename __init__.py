@@ -8,6 +8,7 @@ from bom import *
 def register():
     Pool.register(
         BOM,
+        Production,
         NewVersionStart,
         module='production_bom_versions', type_='model')
     Pool.register(
