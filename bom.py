@@ -115,6 +115,7 @@ class BOM:
 
         if not Transaction().context.get('new_version', False):
             default['master_bom'] = None
+            default['version'] = cls.default_version()
             return super(BOM, cls).copy(boms, default=default)
 
         new_boms = []
