@@ -19,7 +19,9 @@
         <record model="ir.action.act_window" id="act_version_list">
             <field name="name">BOMs Versions</field>
             <field name="res_model">production.bom</field>
-            <field name="context">{'show_versions': True}</field>
+            <field name="context"
+                eval="{'show_versions': True}"
+                pyson="1"/>
         </record>
         <record model="ir.action.act_window.view" id="act_version_list_view1">
             <field name="sequence" eval="10"/>
