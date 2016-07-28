@@ -133,7 +133,7 @@ class BOM:
         Date = pool.get('ir.date')
         transaction = Transaction()
         context = transaction.context
-        cursor = transaction.cursor
+        cursor = transaction.connection.cursor()
 
         if not context.get('show_versions', False):
             table = cls.__table__()
@@ -141,7 +141,8 @@ class BOM:
                 if context.get('production_date') else Date.today())
 
             q = table.select(table.id, where=(table.start_date <= today) &
-                (Literal(today) <= Coalesce(table.end_date, datetime.date.max)))
+                (Literal(today) <= Coalesce(table.end_date, datetime.date.max))
+                )
             cursor.execute(*q)
             ids = [r[0] for r in cursor.fetchall()]
             args.append(('id', 'in', ids))
@@ -156,7 +157,7 @@ class BOM:
             new_boms = cls.copy(boms, {
                     'end_date': None,
                     'start_date': date
-                })
+                    })
         return new_boms
 
 
