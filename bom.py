@@ -4,7 +4,7 @@ import datetime
 from sql import Literal
 from sql.conditionals import Coalesce
 
-from trytond.model import ModelView, fields
+from trytond.model import ModelView, Unique, Check, fields
 from trytond.wizard import Wizard, StateView, Button, StateAction
 from trytond.transaction import Transaction
 from trytond.pyson import PYSONEncoder, Bool, Eval, If
@@ -26,11 +26,13 @@ class BOM:
     @classmethod
     def __setup__(cls):
         super(BOM, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('report_code_uniq', 'unique (master_bom,version)',
+            ('report_code_uniq', Unique(t, t.master_bom, t.version),
                 'Version Must be unique per BOM'),
-            ('end_date_check', 'CHECK (end_date IS NULL or end_date > '
-                'start_date)', 'End date must be greater than start date'),
+            ('end_date_check',
+                Check(t, ((t.end_date == None) | (t.end_date > t.start_date))),
+                'End date must be greater than start date'),
         ]
         cls._error_messages.update({
                 'invalid_dates': 'Invalid dates for version "%(bom)s". They '
