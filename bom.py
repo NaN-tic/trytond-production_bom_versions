@@ -12,11 +12,11 @@ from trytond.pool import Pool, PoolMeta
 
 __all__ = ['BOM', 'Production',
     'NewVersionStart', 'NewVersion', 'OpenVersions']
-__metaclass__ = PoolMeta
 
 
 class BOM:
     __name__ = 'production.bom'
+    __metaclass__ = PoolMeta
 
     start_date = fields.Date('Start Date', required=True)
     end_date = fields.Date('End Date')
@@ -165,6 +165,7 @@ class BOM:
 
 class Production:
     __name__ = 'production'
+    __metaclass__ = PoolMeta
 
     @classmethod
     def __setup__(cls):
@@ -243,10 +244,10 @@ class OpenVersions(Wizard):
 
         encoder = PYSONEncoder()
         action['pyson_domain'] = encoder.encode(
-            [('master_bom', '=', bom.master_bom.id)])
+            [('master_bom', '=', bom and bom.master_bom and bom.master_bom.id)])
         action['pyson_order'] = encoder.encode([('version', 'DESC')])
         context = {'show_versions': True}
-        bom = Bom.get_last_version(bom.master_bom.id)
+        bom = Bom.get_last_version(bom.master_bom and bom.master_bom.id)
         action['pyson_context'] = encoder.encode(context)
 
         action['name'] += ' - %s' % (self.raise_user_error(error='versions',
