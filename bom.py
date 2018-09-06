@@ -14,9 +14,8 @@ __all__ = ['BOM', 'Production',
     'NewVersionStart', 'NewVersion', 'OpenVersions']
 
 
-class BOM:
+class BOM(metaclass=PoolMeta):
     __name__ = 'production.bom'
-    __metaclass__ = PoolMeta
 
     start_date = fields.Date('Start Date', required=True)
     end_date = fields.Date('End Date')
@@ -163,9 +162,8 @@ class BOM:
         return new_boms
 
 
-class Production:
+class Production(metaclass=PoolMeta):
     __name__ = 'production'
-    __metaclass__ = PoolMeta
 
     @classmethod
     def __setup__(cls):
