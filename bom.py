@@ -9,6 +9,8 @@ from trytond.wizard import Wizard, StateView, Button, StateAction
 from trytond.transaction import Transaction
 from trytond.pyson import PYSONEncoder, Bool, Eval, If
 from trytond.pool import Pool, PoolMeta
+from trytond.i18n import gettext
+from trytond.exceptions import UserError
 
 __all__ = ['BOM', 'Production',
     'NewVersionStart', 'NewVersion', 'OpenVersions']
@@ -33,10 +35,6 @@ class BOM(metaclass=PoolMeta):
                 Check(t, ((t.end_date == None) | (t.end_date > t.start_date))),
                 'End date must be greater than start date'),
         ]
-        cls._error_messages.update({
-                'invalid_dates': 'Invalid dates for version "%(bom)s". They '
-                    'overlap with version "%(version)s.',
-            })
 
     @staticmethod
     def default_version():
@@ -94,10 +92,10 @@ class BOM(metaclass=PoolMeta):
             with Transaction().set_context(show_versions=True):
                 boms = self.search(domain, limit=1)
                 if boms:
-                    self.raise_user_error('invalid_dates', {
-                                'bom': self.rec_name,
-                                'version': boms[0].version,
-                            })
+                    raise UserError(gettext(
+                        'production_bom_versions.invalid_dates',
+                            bom=self.rec_name,
+                            version=boms[0].version))
 
     @classmethod
     def create(cls, vlist):
@@ -224,12 +222,6 @@ class OpenVersions(Wizard):
     start_state = 'open_'
     open_ = StateAction('production.act_bom_list')
 
-    @classmethod
-    def __setup__(cls):
-        super(OpenVersions, cls).__setup__()
-        cls._error_messages.update({
-                'versions': ('%s\'s versions'),
-                })
 
     def do_open_(self, action):
         pool = Pool()
@@ -248,8 +240,8 @@ class OpenVersions(Wizard):
         bom = Bom.get_last_version(bom.master_bom and bom.master_bom.id)
         action['pyson_context'] = encoder.encode(context)
 
-        action['name'] += ' - %s' % (self.raise_user_error(error='versions',
-                raise_exception=False, error_args=bom.rec_name))
+        action['name'] += ' - %s' % (gettext('production_bom_versions.versions',
+                version=bom.rec_name))
 
         return action, {}
 
