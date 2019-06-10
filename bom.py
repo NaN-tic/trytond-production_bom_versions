@@ -12,8 +12,8 @@ from trytond.pool import Pool, PoolMeta
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 
-__all__ = ['BOM', 'Production',
-    'NewVersionStart', 'NewVersion', 'OpenVersions']
+__all__ = ['BOM', 'Production', 'NewVersionStart', 'NewVersion',
+    'OpenVersions']
 
 
 class BOM(metaclass=PoolMeta):
@@ -30,11 +30,11 @@ class BOM(metaclass=PoolMeta):
         t = cls.__table__()
         cls._sql_constraints += [
             ('report_code_uniq', Unique(t, t.master_bom, t.version),
-                'Version Must be unique per BOM'),
+                'production_bom_versions.msg_bom_report_code_uniq'),
             ('end_date_check',
                 Check(t, ((t.end_date == None) | (t.end_date > t.start_date))),
-                'End date must be greater than start date'),
-        ]
+                'production_bom_Versions.msg_end_date_check'),
+            ]
 
     @staticmethod
     def default_version():
@@ -92,8 +92,8 @@ class BOM(metaclass=PoolMeta):
             with Transaction().set_context(show_versions=True):
                 boms = self.search(domain, limit=1)
                 if boms:
-                    raise UserError(gettext(
-                        'production_bom_versions.invalid_dates',
+                    raise UserError(gettext('production_bom_versions.'
+                            'msg_invalid_dates',
                             bom=self.rec_name,
                             version=boms[0].version))
 
@@ -240,8 +240,8 @@ class OpenVersions(Wizard):
         bom = Bom.get_last_version(bom.master_bom and bom.master_bom.id)
         action['pyson_context'] = encoder.encode(context)
 
-        action['name'] += ' - %s' % (gettext('production_bom_versions.versions',
-                version=bom.rec_name))
+        action['name'] += ' - %s' % (gettext('production_bom_versions.'
+                'msg_versions', version=bom.rec_name))
 
         return action, {}
 

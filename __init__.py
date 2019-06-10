@@ -1,17 +1,15 @@
 #The COPYRIGHT file at the top level of this repository contains the full
 #copyright notices and license terms.
-
 from trytond.pool import Pool
-from .bom import *
-
+from . import bom
 
 def register():
     Pool.register(
-        BOM,
-        Production,
-        NewVersionStart,
+        bom.BOM,
+        bom.Production,
+        bom.NewVersionStart,
         module='production_bom_versions', type_='model')
     Pool.register(
-        OpenVersions,
-        NewVersion,
+        bom.OpenVersions,
+        bom.NewVersion,
         module='production_bom_versions', type_='wizard')
