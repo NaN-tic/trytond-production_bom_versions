@@ -196,7 +196,7 @@ class NewVersion(Wizard):
     start = StateView('production.bom.new.version.start',
         'production_bom_versions.new_version_start_form', [
             Button('Cancel', 'end', 'tryton-cancel'),
-            Button('Create', 'create_', 'tryton-go-next', default=True),
+            Button('Create', 'create_', 'tryton-forward', default=True),
             ])
     create_ = StateAction('production.act_bom_list')
 
