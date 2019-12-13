@@ -1,22 +1,6 @@
-# 
+#
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
-
-msgctxt "error:production.bom.open_versions:"
-msgid "%s's versions"
-msgstr "Versiones de %s"
-
-msgctxt "error:production.bom:"
-msgid ""
-"Invalid dates for version \"%(bom)s\". They overlap with version "
-"\"%(version)s."
-msgstr ""
-"Fechas invalidas para la version \"%(bom)s\". Se superponen con la versión "
-"\"%(version)s\"."
-
-msgctxt "error:production.bom:"
-msgid "Version Must be unique per BOM"
-msgstr "La versión debe ser única por lista de material"
 
 msgctxt "field:production.bom,end_date:"
 msgid "End Date"
@@ -25,6 +9,14 @@ msgstr "Fecha final"
 msgctxt "field:production.bom,master_bom:"
 msgid "BOM"
 msgstr "Lista de material"
+
+msgctxt "field:production.bom,modification_made:"
+msgid "Modification Made"
+msgstr "Modificación realizada"
+
+msgctxt "field:production.bom,reason_change:"
+msgid "Reason for Change"
+msgstr "Motivo de cambio"
 
 msgctxt "field:production.bom,start_date:"
 msgid "Start Date"
@@ -38,9 +30,13 @@ msgctxt "field:production.bom.new.version.start,date:"
 msgid "Date"
 msgstr "Fecha"
 
-msgctxt "field:production.bom.new.version.start,id:"
-msgid "ID"
-msgstr "Identificador"
+msgctxt "field:production.bom.new.version.start,modification_made:"
+msgid "Modification Made"
+msgstr "Modificación realizada"
+
+msgctxt "field:production.bom.new.version.start,reason_change:"
+msgid "Reason for Change"
+msgstr "Motivo de cambio"
 
 msgctxt "model:ir.action,name:act_version_list"
 msgid "BOMs Versions"
@@ -54,6 +50,26 @@ msgctxt "model:ir.action,name:wizard_new_version"
 msgid "New Version"
 msgstr "Nueva version"
 
+msgctxt "model:ir.message,text:msg_bom_end_date_check"
+msgid "End date must be greater than start date."
+msgstr "La fecha de finalización debe ser mayor que la fecha de inicio."
+
+msgctxt "model:ir.message,text:msg_bom_report_code_uniq"
+msgid "Version must be unique per BOM."
+msgstr "La versión debe ser única por BOM."
+
+msgctxt "model:ir.message,text:msg_invalid_dates"
+msgid ""
+"Invalid dates for version \"%(bom)s\". They overlap with version "
+"\"%(version)s."
+msgstr ""
+"Fechas inválidas para la versión \"%(bom)s\". Se superponen con la versión "
+"\"%(version)s."
+
+msgctxt "model:ir.message,text:msg_versions"
+msgid "%(version)s\\'s versions"
+msgstr "%(version)s\\'s versiones"
+
 msgctxt "model:ir.ui.menu,name:menu_version_list"
 msgid "BOMs Versions"
 msgstr "Versiones de listas de material"
@@ -63,12 +79,12 @@ msgid "New Version Start"
 msgstr "Inicio nueva version"
 
 msgctxt "view:production.bom.new.version.start:"
-msgid "Create New BOM version"
-msgstr "Crear nueva versión de la Lista de material"
-
-msgctxt "view:production.bom.new.version.start:"
 msgid "Enter the date which new version will be effective:"
 msgstr "Introduce la fecha en que la nueva versión será efectiva:"
+
+msgctxt "view:production.bom:"
+msgid "Additional Information"
+msgstr "Información adicional"
 
 msgctxt "wizard_button:production.bom.new.version,start,create_:"
 msgid "Create"
