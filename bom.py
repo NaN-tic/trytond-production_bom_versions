@@ -23,6 +23,9 @@ class BOM(metaclass=PoolMeta):
     end_date = fields.Date('End Date')
     version = fields.Integer('Version', readonly=True)
     master_bom = fields.Many2One('production.bom', 'BOM', readonly=True)
+    reason_change = fields.Text('Reason for Change')
+    modification_made = fields.Text('Modification Made')
+
 
     @classmethod
     def __setup__(cls):
@@ -33,7 +36,7 @@ class BOM(metaclass=PoolMeta):
                 'production_bom_versions.msg_bom_report_code_uniq'),
             ('end_date_check',
                 Check(t, ((t.end_date == None) | (t.end_date > t.start_date))),
-                'production_bom_Versions.msg_end_date_check'),
+                'production_bom_versions.msg_bom_end_date_check'),
             ]
 
     @staticmethod
@@ -150,12 +153,14 @@ class BOM(metaclass=PoolMeta):
             order=order, count=count, query=query)
 
     @classmethod
-    def new_version(cls, boms, date):
+    def new_version(cls, boms, date, reason_change, modification_made):
         cls.write(boms, {'end_date': date - datetime.timedelta(days=1)})
         with Transaction().set_context(new_version=True):
             new_boms = cls.copy(boms, {
                     'end_date': None,
-                    'start_date': date
+                    'start_date': date,
+                    'reason_change': reason_change,
+                    'modification_made': modification_made,
                     })
         return new_boms
 
@@ -181,6 +186,8 @@ class NewVersionStart(ModelView):
     __name__ = 'production.bom.new.version.start'
 
     date = fields.Date('Date')
+    reason_change = fields.Text('Reason for Change')
+    modification_made = fields.Text('Modification Made')
 
     @staticmethod
     def default_date():
@@ -205,7 +212,8 @@ class NewVersion(Wizard):
         BOM = pool.get('production.bom')
 
         boms = BOM.browse(Transaction().context['active_ids'])
-        new_versions = BOM.new_version(boms, self.start.date)
+        new_versions = BOM.new_version(boms, self.start.date,
+            self.start.reason_change, self.start.modification_made)
 
         data = {'res_id': [i.id for i in new_versions]}
         if len(new_versions) == 1:
