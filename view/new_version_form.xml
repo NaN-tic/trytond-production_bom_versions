@@ -7,4 +7,8 @@ this repository contains the full copyright notices and license terms. -->
     <label string="Enter the date which new version will be effective:"
         id="explanation"/>
     <field name="date"/>
+    <separator name="reason_change" colspan="4" id="reason_change"/>
+    <field name="reason_change" colspan="4" height="50"/>
+    <separator name="modification_made" colspan="4" id="modification_made"/>
+    <field name="modification_made" colspan="4" height="50"/>
 </form>
