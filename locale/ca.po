@@ -82,9 +82,25 @@ msgctxt "view:production.bom.new.version.start:"
 msgid "Enter the date which new version will be effective:"
 msgstr "Introdueix la data en que la nova versió serà efectiva:"
 
+msgctxt "view:production.bom.new.version.start:"
+msgid "Modification Made"
+msgstr "Modificació realitzada"
+
+msgctxt "view:production.bom.new.version.start:"
+msgid "Reason for Change"
+msgstr "Motiu de canvi"
+
 msgctxt "view:production.bom:"
 msgid "Additional Information"
 msgstr "Informació adicional"
+
+msgctxt "view:production.bom:"
+msgid "Modification Made"
+msgstr "Modificació realitzada"
+
+msgctxt "view:production.bom:"
+msgid "Reason for Change"
+msgstr "Motiu de canvi"
 
 msgctxt "wizard_button:production.bom.new.version,start,create_:"
 msgid "Create"
