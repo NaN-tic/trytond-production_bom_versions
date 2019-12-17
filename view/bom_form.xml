@@ -14,9 +14,9 @@ this repository contains the full copyright notices and license terms. -->
     </xpath>
     <xpath expr="/form/notebook/page[@id='lines']" position="after">
         <page string="Additional Information" id="aditional_information">
-          <separator name="reason_change" colspan="4" id="reason_change"/>
+          <separator string="Reason for Change" colspan="4" id="reason_change"/>
           <field name="reason_change" colspan="4" height="100"/>
-          <separator name="modification_made" colspan="4" id="modification_made"/>
+          <separator string="Modification Made" colspan="4" id="modification_made"/>
           <field name="modification_made" colspan="4" height="100"/>
         </page>
     </xpath>
