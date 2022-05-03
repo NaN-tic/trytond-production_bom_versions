@@ -178,7 +178,7 @@ class Production(metaclass=PoolMeta):
                 Eval('planned_date'))
         for fname in ('effective_date', 'planned_date'):
             if fname not in cls.bom.depends:
-                cls.bom.depends.append(fname)
+                cls.bom.depends.add(fname)
 
 
 class NewVersionStart(ModelView):
