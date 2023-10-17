@@ -235,10 +235,7 @@ class OpenVersions(Wizard):
         pool = Pool()
         Bom = pool.get('production.bom')
 
-        transaction = Transaction()
-        context = transaction.context
-
-        bom = Bom(context.get('active_id'))
+        bom = self.record
 
         encoder = PYSONEncoder()
         action['pyson_domain'] = encoder.encode(
