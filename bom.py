@@ -1,19 +1,13 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 import datetime
-from sql import Literal
-from sql.conditionals import Coalesce
-
 from trytond.model import ModelView, Unique, Check, fields
 from trytond.wizard import Wizard, StateView, Button, StateAction
 from trytond.transaction import Transaction
-from trytond.pyson import PYSONEncoder, Bool, Eval, If
+from trytond.pyson import PYSONEncoder, Bool, Date, Eval, If
 from trytond.pool import Pool, PoolMeta
 from trytond.i18n import gettext
-from trytond.exceptions import UserError
-
-__all__ = ['BOM', 'Production', 'NewVersionStart', 'NewVersion',
-    'OpenVersions']
+from trytond.exceptions import UserError, UserWarning
 
 
 class BOM(metaclass=PoolMeta):
@@ -25,7 +19,6 @@ class BOM(metaclass=PoolMeta):
     master_bom = fields.Many2One('production.bom', 'BOM', readonly=True)
     reason_change = fields.Text('Reason for Change')
     modification_made = fields.Text('Modification Made')
-
 
     @classmethod
     def __setup__(cls):
@@ -100,6 +93,20 @@ class BOM(metaclass=PoolMeta):
                             bom=self.rec_name,
                             version=boms[0].version))
 
+    @property
+    def is_valid(self):
+        Date = Pool().get('ir.date')
+
+        transaction = Transaction()
+        context = transaction.context
+        today = context.get('production_date', Date.today())
+
+        if self.end_date and (self.start_date <= today and self.end_date < today):
+            return False
+        elif today < self.start_date:
+            return False
+        return True
+
     @classmethod
     def create(cls, vlist):
         boms = super(BOM, cls).create(vlist)
@@ -129,30 +136,6 @@ class BOM(metaclass=PoolMeta):
         return new_boms
 
     @classmethod
-    def search(cls, args, offset=0, limit=None, order=None, count=False,
-            query=False):
-        pool = Pool()
-        Date = pool.get('ir.date')
-        transaction = Transaction()
-        context = transaction.context
-        cursor = transaction.connection.cursor()
-
-        if not context.get('show_versions', False):
-            table = cls.__table__()
-            today = (context['production_date']
-                if context.get('production_date') else Date.today())
-
-            q = table.select(table.id, where=(table.start_date <= today) &
-                (Literal(today) <= Coalesce(table.end_date, datetime.date.max))
-                )
-            cursor.execute(*q)
-            ids = [r[0] for r in cursor.fetchall()]
-            args.append(('id', 'in', ids))
-
-        return super(BOM, cls).search(args, offset=offset, limit=limit,
-            order=order, count=count, query=query)
-
-    @classmethod
     def new_version(cls, boms, date, reason_change, modification_made):
         cls.write(boms, {'end_date': date - datetime.timedelta(days=1)})
         with Transaction().set_context(new_version=True):
@@ -179,6 +162,33 @@ class Production(metaclass=PoolMeta):
         for fname in ('effective_date', 'planned_date'):
             if fname not in cls.bom.depends:
                 cls.bom.depends.add(fname)
+        cls.bom.domain += [If((Eval('state').in_(['request', 'draft'])) & ~Bool(Eval('bom', False)),
+            [
+                ('start_date', '<=', If(Bool(Eval('effective_date')), Eval('effective_date'), Eval('planned_date', Date()))),
+                ['OR',
+                    ('end_date', '>=', If(Bool(Eval('effective_date')), Eval('effective_date'), Eval('planned_date', Date()))),
+                    ('end_date', '=', None),
+                ]
+            ],
+            ())]
+
+    @classmethod
+    def run(cls, productions):
+        pool = Pool()
+        Warning = pool.get('res.user.warning')
+
+        for production in productions:
+            if production.bom and not production.bom.is_valid:
+                production_date = production.effective_date or production.planned_date
+                with Transaction().set_context(production_date=production_date):
+                    key = 'bom_expired_date_%s_%s' % (production.id, production.bom.id)
+                    if Warning.check(key):
+                        raise UserWarning(key,
+                            gettext('production_bom_versions.msg_bom_expired_date',
+                                production=production.rec_name,
+                                bom=production.bom.rec_name,
+                                ))
+        return super().run(productions)
 
 
 class NewVersionStart(ModelView):
