@@ -17,35 +17,36 @@ class ProductionBomVersionsTestCase(CompanyTestMixin, ModuleTestCase):
         "Test bom is_valid"
         pool = Pool()
         Bom = pool.get('production.bom')
+        Production = pool.get('production')
 
         today = dt.date.today()
         tomorrow = today + dt.timedelta(days=1)
         after_tomorrow = tomorrow + dt.timedelta(days=1)
         yesterday = today - dt.timedelta(days=1)
+        before_yesterday = today - dt.timedelta(days=2)
 
-        bom = Bom()
-        bom.name = 'Test'
-        bom.start_date = today
-        bom.save()
+        bom1 = Bom()
+        bom1.name = 'Test1'
+        bom1.start_date = today
+        bom1.save()
 
-        self.assertEqual(bom.is_valid, True)
+        bom2 = Bom()
+        bom2.name = 'Test2'
+        bom2.start_date = before_yesterday
+        bom2.end_date = yesterday
+        bom2.save()
 
-        with Transaction().set_context(production_date=today):
-            self.assertEqual(bom.is_valid, True)
+        production = Production()
 
-        with Transaction().set_context(production_date=yesterday):
-            self.assertEqual(bom.is_valid, False)
+        self.assertEqual(production.bom_valid, True)
 
-        bom.start_date = yesterday
-        bom.end_date = yesterday
-        self.assertEqual(bom.is_valid, False)
+        production.bom = bom1
+        self.assertEqual(production.bom_valid, True)
 
-        bom.end_date = tomorrow
-        self.assertEqual(bom.is_valid, True)
+        production.bom = bom2
+        self.assertEqual(production.bom_valid, False)
 
-        bom.start_date = after_tomorrow
-        bom.end_date = None
-        with Transaction().set_context(production_date=today):
-            self.assertEqual(bom.is_valid, False)
+        production.planned_date = yesterday
+        self.assertEqual(production.bom_valid, True)
 
 del ModuleTestCase

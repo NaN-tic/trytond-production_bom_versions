@@ -92,21 +92,6 @@ class BOM(metaclass=PoolMeta):
                             'msg_invalid_dates',
                             bom=self.rec_name,
                             version=boms[0].version))
-
-    @property
-    def is_valid(self):
-        Date = Pool().get('ir.date')
-
-        transaction = Transaction()
-        context = transaction.context
-        today = context.get('production_date', Date.today())
-
-        if self.end_date and (self.start_date <= today and self.end_date < today):
-            return False
-        elif today < self.start_date:
-            return False
-        return True
-
     @classmethod
     def create(cls, vlist):
         boms = super(BOM, cls).create(vlist)
@@ -150,18 +135,11 @@ class BOM(metaclass=PoolMeta):
 
 class Production(metaclass=PoolMeta):
     __name__ = 'production'
+    bom_valid = fields.Function(fields.Boolean('Bom Valid'), 'on_change_with_bom_valid')
 
     @classmethod
     def __setup__(cls):
         super(Production, cls).__setup__()
-        if 'production_date' not in cls.bom.context:
-            cls.bom.context['production_date'] = If(
-                Bool(Eval('effective_date')),
-                Eval('effective_date'),
-                Eval('planned_date'))
-        for fname in ('effective_date', 'planned_date'):
-            if fname not in cls.bom.depends:
-                cls.bom.depends.add(fname)
         cls.bom.domain += [If((Eval('state').in_(['request', 'draft'])) & ~Bool(Eval('bom', False)),
             [
                 ('start_date', '<=', If(Bool(Eval('effective_date')), Eval('effective_date'), Eval('planned_date', Date()))),
@@ -172,22 +150,40 @@ class Production(metaclass=PoolMeta):
             ],
             ())]
 
+    @fields.depends('effective_date', 'planned_date', 'bom')
+    def on_change_with_bom_valid(self, name=None):
+        pool = Pool()
+        Date = pool.get('ir.date')
+
+        today = Date.today()
+        production_date = self.effective_date or self.planned_date or today
+        bom = self.bom
+        if not bom:
+            return True
+
+        if (bom.end_date and (bom.start_date <= production_date
+                and bom.end_date < production_date)):
+            return False
+        elif production_date < bom.start_date:
+            return False
+        return True
+
     @classmethod
     def run(cls, productions):
         pool = Pool()
         Warning = pool.get('res.user.warning')
 
         for production in productions:
-            if production.bom and not production.bom.is_valid:
-                production_date = production.effective_date or production.planned_date
-                with Transaction().set_context(production_date=production_date):
-                    key = 'bom_expired_date_%s_%s' % (production.id, production.bom.id)
-                    if Warning.check(key):
-                        raise UserWarning(key,
-                            gettext('production_bom_versions.msg_bom_expired_date',
-                                production=production.rec_name,
-                                bom=production.bom.rec_name,
-                                ))
+            if production.bom_valid:
+                continue
+
+            key = 'bom_expired_date_%s_%s' % (production.id, production.bom.id)
+            if Warning.check(key):
+                raise UserWarning(key,
+                    gettext('production_bom_versions.msg_bom_expired_date',
+                        production=production.rec_name,
+                        bom=production.bom.rec_name,
+                        ))
         return super().run(productions)
 
 
