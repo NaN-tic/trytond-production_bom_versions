@@ -5,7 +5,6 @@ import datetime as dt
 from trytond.modules.company.tests import CompanyTestMixin
 from trytond.tests.test_tryton import ModuleTestCase, with_transaction
 from trytond.pool import Pool
-from trytond.transaction import Transaction
 
 
 class ProductionBomVersionsTestCase(CompanyTestMixin, ModuleTestCase):
@@ -21,7 +20,7 @@ class ProductionBomVersionsTestCase(CompanyTestMixin, ModuleTestCase):
 
         today = dt.date.today()
         tomorrow = today + dt.timedelta(days=1)
-        after_tomorrow = tomorrow + dt.timedelta(days=1)
+        tomorrow + dt.timedelta(days=1)
         yesterday = today - dt.timedelta(days=1)
         before_yesterday = today - dt.timedelta(days=2)
 
