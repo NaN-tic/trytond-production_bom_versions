@@ -22,7 +22,7 @@ class BOM(metaclass=PoolMeta):
 
     @classmethod
     def __setup__(cls):
-        super(BOM, cls).__setup__()
+        super().__setup__()
         t = cls.__table__()
         cls._sql_constraints += [
             ('report_code_uniq', Unique(t, t.master_bom, t.version),
@@ -31,6 +31,7 @@ class BOM(metaclass=PoolMeta):
                 Check(t, ((t.end_date == None) | (t.end_date > t.start_date))),
                 'production_bom_versions.msg_bom_end_date_check'),
             ]
+        cls._order.insert(0, ('version', 'DESC NULLS LAST'))
 
     @staticmethod
     def default_version():
@@ -41,6 +42,12 @@ class BOM(metaclass=PoolMeta):
         pool = Pool()
         Date = pool.get('ir.date')
         return Date.today()
+
+    def get_rec_name(self, name):
+        rec_name = super().get_rec_name(name)
+        if self.version:
+            rec_name += " (%s)" % self.version
+        return rec_name
 
     @classmethod
     def get_last_version(cls, master_bom):
@@ -149,16 +156,22 @@ class BOM(metaclass=PoolMeta):
                     'modification_made': modification_made,
                     })
 
-        # relate new version BOMs to the product and remove the oldest one
+        # relate new version BOMs to the product in case source bom is related to the product
+        existing_keys = set((pb.product.id, pb.bom.master_bom)
+            for pb in ProductBOM.search([('bom', 'in', boms)]))
+
         to_save = []
-        for bom in new_boms:
-            to_save += bom._product_new_version_boms()
-        to_delete = ProductBOM.search([
-                ('bom', 'in', boms),
-                ])
+        for new_bom in new_boms:
+            for output in new_bom.outputs:
+                key = (output.product.id, new_bom.master_bom)
+                if key in existing_keys:
+                    to_save += [ProductBOM(
+                            product=output.product,
+                            bom=new_bom,
+                            )]
+
 
         ProductBOM.save(to_save)
-        ProductBOM.delete(to_delete)
         return new_boms
 
 
@@ -246,7 +259,7 @@ class NewVersion(Wizard):
         pool = Pool()
         BOM = pool.get('production.bom')
 
-        boms = BOM.browse(Transaction().context['active_ids'])
+        boms = self.records
         new_versions = BOM.new_version(boms, self.start.date,
             self.start.reason_change, self.start.modification_made)
 

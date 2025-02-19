@@ -155,16 +155,26 @@ class Test(unittest.TestCase):
         production.click('run')
         self.assertEqual(production.state, 'running')
 
-        # Create two new bom versions from the wizard, and check that boom is related to product
+        # Relate BOM to product
         self.assertEqual(len(product.boms), 0)
 
+        ProductBom = Model.get('product.product-production.bom')
+        product_bom = ProductBom(
+            product=product,
+            bom=bom,
+            )
+        product_bom.save()
+        product.reload()
+        self.assertEqual(len(product.boms), 1)
+
+        # Create two new bom versions from the wizard, and check that boom is related to product
         bom_new_version = Wizard('production.bom.new.version', [bom])
         bom_new_version.form.date = yesterday2
         bom_new_version.form.reason_change = 'Test New Version'
         bom_new_version.execute('create_')
 
         product.reload()
-        self.assertEqual(len(product.boms), 1)
+        self.assertEqual(len(product.boms), 2)
         new_bom = product.boms[0].bom
         self.assertEqual((new_bom.start_date, new_bom.end_date),
             (yesterday2, None))
@@ -175,13 +185,17 @@ class Test(unittest.TestCase):
         bom_new_version2.execute('create_')
 
         product.reload()
-        self.assertEqual(len(product.boms), 1)
-        new_bom2 = product.boms[0].bom
-        self.assertNotEqual(new_bom, new_bom2)
-        self.assertEqual((new_bom2.start_date, new_bom2.end_date),
-            (today, None))
+        self.assertEqual(len(product.boms), 3)
 
-        # end date when create new version is date - 1 day
-        new_bom.reload()
-        self.assertEqual((new_bom.start_date, new_bom.end_date),
-            (yesterday2, yesterday))
+        # product.boms return boms ordered by version
+        bom1, bom2, bom3 = product.boms[0].bom, product.boms[1].bom, product.boms[2].bom
+
+        # version, start_date, end_date
+        values = [
+            ('product (3)', 3, today, None),
+            ('product (2)', 2, yesterday2, yesterday),
+            ('product (1)', 1, yesterday4, yesterday3),
+            ]
+        for i, bom in enumerate([bom1, bom2, bom3]):
+            self.assertEqual(
+                (bom.rec_name, bom.version, bom.start_date, bom.end_date), values[i])
