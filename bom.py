@@ -127,18 +127,6 @@ class BOM(metaclass=PoolMeta):
             new_boms.extend(super(BOM, cls).copy([bom], default=default))
         return new_boms
 
-    def _product_new_version_boms(self):
-        pool = Pool()
-        ProductBOM = pool.get('product.product-production.bom')
-
-        res = []
-        for output in self.outputs:
-            res.append(ProductBOM(
-                    product=output.product,
-                    bom=self,
-                    ))
-        return res
-
     @classmethod
     def new_version(cls, boms, date, reason_change, modification_made):
         pool = Pool()
