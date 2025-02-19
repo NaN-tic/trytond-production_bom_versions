@@ -120,9 +120,27 @@ class BOM(metaclass=PoolMeta):
             new_boms.extend(super(BOM, cls).copy([bom], default=default))
         return new_boms
 
+    def _product_new_version_boms(self):
+        pool = Pool()
+        ProductBOM = pool.get('product.product-production.bom')
+
+        res = []
+        for output in self.outputs:
+            res.append(ProductBOM(
+                    product=output.product,
+                    bom=self,
+                    ))
+        return res
+
     @classmethod
     def new_version(cls, boms, date, reason_change, modification_made):
-        cls.write(boms, {'end_date': date - datetime.timedelta(days=1)})
+        pool = Pool()
+        ProductBOM = pool.get('product.product-production.bom')
+
+        cls.write(boms, {
+            'end_date': date - datetime.timedelta(days=1),
+            })
+
         with Transaction().set_context(new_version=True):
             new_boms = cls.copy(boms, {
                     'end_date': None,
@@ -130,6 +148,17 @@ class BOM(metaclass=PoolMeta):
                     'reason_change': reason_change,
                     'modification_made': modification_made,
                     })
+
+        # relate new version BOMs to the product and remove the oldest one
+        to_save = []
+        for bom in new_boms:
+            to_save += bom._product_new_version_boms()
+        to_delete = ProductBOM.search([
+                ('bom', 'in', boms),
+                ])
+
+        ProductBOM.save(to_save)
+        ProductBOM.delete(to_delete)
         return new_boms
 
 
