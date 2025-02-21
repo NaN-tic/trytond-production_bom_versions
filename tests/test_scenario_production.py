@@ -2,7 +2,7 @@ import datetime as dt
 import unittest
 from decimal import Decimal
 
-from proteus import Model
+from proteus import Model, Wizard
 from trytond.exceptions import UserWarning
 from trytond.modules.company.tests.tools import create_company
 from trytond.tests.test_tryton import drop_db
@@ -23,7 +23,9 @@ class Test(unittest.TestCase):
 
         today = dt.date.today()
         yesterday = today - dt.timedelta(days=1)
-        before_yesterday = yesterday - dt.timedelta(days=1)
+        yesterday2 = today - dt.timedelta(days=2)
+        yesterday3 = today - dt.timedelta(days=3)
+        yesterday4 = today - dt.timedelta(days=4)
 
         # Activate modules
         config = activate_modules('production_bom_versions')
@@ -136,8 +138,8 @@ class Test(unittest.TestCase):
         self.assertEqual(production.state, 'draft')
         production.click('wait')
         self.assertEqual(production.state, 'waiting')
-        bom.start_date = before_yesterday
-        bom.end_date = yesterday
+        bom.start_date = yesterday4
+        bom.end_date = yesterday3
         bom.save()
         production.click('assign_try')
         self.assertEqual(production.state, 'assigned')
@@ -152,3 +154,48 @@ class Test(unittest.TestCase):
         Warning(user=config.user, name=key).save()
         production.click('run')
         self.assertEqual(production.state, 'running')
+
+        # Relate BOM to product
+        self.assertEqual(len(product.boms), 0)
+
+        ProductBom = Model.get('product.product-production.bom')
+        product_bom = ProductBom(
+            product=product,
+            bom=bom,
+            )
+        product_bom.save()
+        product.reload()
+        self.assertEqual(len(product.boms), 1)
+
+        # Create two new bom versions from the wizard, and check that boom is related to product
+        bom_new_version = Wizard('production.bom.new.version', [bom])
+        bom_new_version.form.date = yesterday2
+        bom_new_version.form.reason_change = 'Test New Version'
+        bom_new_version.execute('create_')
+
+        product.reload()
+        self.assertEqual(len(product.boms), 2)
+        new_bom = product.boms[0].bom
+        self.assertEqual((new_bom.start_date, new_bom.end_date),
+            (yesterday2, None))
+
+        bom_new_version2 = Wizard('production.bom.new.version', [new_bom])
+        bom_new_version2.form.date = today
+        bom_new_version2.form.reason_change = 'Test New Version'
+        bom_new_version2.execute('create_')
+
+        product.reload()
+        self.assertEqual(len(product.boms), 3)
+
+        # product.boms return boms ordered by version
+        bom1, bom2, bom3 = product.boms[0].bom, product.boms[1].bom, product.boms[2].bom
+
+        # version, start_date, end_date
+        values = [
+            ('product (3)', 3, today, None),
+            ('product (2)', 2, yesterday2, yesterday),
+            ('product (1)', 1, yesterday4, yesterday3),
+            ]
+        for i, bom in enumerate([bom1, bom2, bom3]):
+            self.assertEqual(
+                (bom.rec_name, bom.version, bom.start_date, bom.end_date), values[i])
