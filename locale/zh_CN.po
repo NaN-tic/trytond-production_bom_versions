@@ -1,0 +1,125 @@
+#
+msgid ""
+msgstr ""
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgctxt "field:production.bom,end_date:"
+msgid "End Date"
+msgstr "结账日期"
+
+msgctxt "field:production.bom,master_bom:"
+msgid "BOM"
+msgstr "物料清单"
+
+msgctxt "field:production.bom,modification_made:"
+msgid "Modification Made"
+msgstr "已做修改"
+
+msgctxt "field:production.bom,reason_change:"
+msgid "Reason for Change"
+msgstr "变更原因"
+
+msgctxt "field:production.bom,start_date:"
+msgid "Start Date"
+msgstr "启用日期"
+
+msgctxt "field:production.bom,version:"
+msgid "Version"
+msgstr "版本"
+
+msgctxt "field:production.bom.new.version.start,date:"
+msgid "Date"
+msgstr "日期"
+
+msgctxt "field:production.bom.new.version.start,modification_made:"
+msgid "Modification Made"
+msgstr "已做修改"
+
+msgctxt "field:production.bom.new.version.start,reason_change:"
+msgid "Reason for Change"
+msgstr "变更原因"
+
+msgctxt "model:ir.action,name:act_version_list"
+msgid "BOMs Versions"
+msgstr "物料清单版本"
+
+msgctxt "model:ir.action,name:wizard_bom_versions"
+msgid "Versions"
+msgstr "版本"
+
+msgctxt "model:ir.action,name:wizard_new_version"
+msgid "New Version"
+msgstr "新版本"
+
+msgctxt "model:ir.message,text:msg_bom_end_date_check"
+msgid "End date must be greater than start date."
+msgstr "结束日期必须晚于开始日期。"
+
+msgctxt "model:ir.message,text:msg_bom_report_code_uniq"
+msgid "Version must be unique per BOM."
+msgstr "同一物料清单的版本必须唯一。"
+
+#, python-format
+msgctxt "model:ir.message,text:msg_invalid_dates"
+msgid ""
+"Invalid dates for version \"%(bom)s\". They overlap with version "
+"\"%(version)s."
+msgstr "版本“%(bom)s”的日期无效，与版本“%(version)s”的日期重叠。"
+
+#, python-format
+msgctxt "model:ir.message,text:msg_versions"
+msgid "%(version)s\\'s versions"
+msgstr "%(version)s 的版本"
+
+msgctxt "model:ir.ui.menu,name:menu_version_list"
+msgid "BOMs Versions"
+msgstr "物料清单版本"
+
+msgctxt "model:production.bom.new.version.start,name:"
+msgid "New Version Start"
+msgstr "新版本：开始"
+
+msgctxt "view:production.bom.new.version.start:"
+msgid "Enter the date which new version will be effective:"
+msgstr "输入新版本生效日期："
+
+msgctxt "view:production.bom.new.version.start:"
+msgid "Modification Made"
+msgstr "已做修改"
+
+msgctxt "view:production.bom.new.version.start:"
+msgid "Reason for Change"
+msgstr "变更原因"
+
+msgctxt "view:production.bom:"
+msgid "Additional Information"
+msgstr "附加信息"
+
+msgctxt "view:production.bom:"
+msgid "Modification Made"
+msgstr "已做修改"
+
+msgctxt "view:production.bom:"
+msgid "Reason for Change"
+msgstr "变更原因"
+
+msgctxt "wizard_button:production.bom.new.version,start,create_:"
+msgid "Create"
+msgstr "创建"
+
+msgctxt "wizard_button:production.bom.new.version,start,end:"
+msgid "Cancel"
+msgstr "取消"
+
+msgctxt "field:production,bom_valid:"
+msgid "Bom Valid"
+msgstr "物料清单有效"
+
+#, python-format
+msgctxt "model:ir.message,text:msg_bom_expired_date"
+msgid "Production \"%(production)s\" has BOM \"%(bom)s\" with expired dates."
+msgstr "生产“%(production)s”的物料清单“%(bom)s”已过期。"
