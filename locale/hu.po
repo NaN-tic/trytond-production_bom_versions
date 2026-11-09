@@ -1,0 +1,127 @@
+#
+msgid ""
+msgstr ""
+"Language: hu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgctxt "field:production.bom,end_date:"
+msgid "End Date"
+msgstr "Befejező dátum"
+
+msgctxt "field:production.bom,master_bom:"
+msgid "BOM"
+msgstr "Darabjegyzék"
+
+msgctxt "field:production.bom,modification_made:"
+msgid "Modification Made"
+msgstr "Módosítás történt"
+
+msgctxt "field:production.bom,reason_change:"
+msgid "Reason for Change"
+msgstr "Módosítás oka"
+
+msgctxt "field:production.bom,start_date:"
+msgid "Start Date"
+msgstr "Kezdődátum"
+
+msgctxt "field:production.bom,version:"
+msgid "Version"
+msgstr "Verzió"
+
+msgctxt "field:production.bom.new.version.start,date:"
+msgid "Date"
+msgstr "Dátum"
+
+msgctxt "field:production.bom.new.version.start,modification_made:"
+msgid "Modification Made"
+msgstr "Módosítás történt"
+
+msgctxt "field:production.bom.new.version.start,reason_change:"
+msgid "Reason for Change"
+msgstr "Módosítás oka"
+
+msgctxt "model:ir.action,name:act_version_list"
+msgid "BOMs Versions"
+msgstr "Darabjegyzék-verziók"
+
+msgctxt "model:ir.action,name:wizard_bom_versions"
+msgid "Versions"
+msgstr "Verziók"
+
+msgctxt "model:ir.action,name:wizard_new_version"
+msgid "New Version"
+msgstr "Új verzió"
+
+msgctxt "model:ir.message,text:msg_bom_end_date_check"
+msgid "End date must be greater than start date."
+msgstr "A záró dátumnak későbbinek kell lennie a kezdő dátumnál."
+
+msgctxt "model:ir.message,text:msg_bom_report_code_uniq"
+msgid "Version must be unique per BOM."
+msgstr "A verziónak darabjegyzékenként egyedinek kell lennie."
+
+#, python-format
+msgctxt "model:ir.message,text:msg_invalid_dates"
+msgid ""
+"Invalid dates for version \"%(bom)s\". They overlap with version "
+"\"%(version)s."
+msgstr ""
+"Érvénytelen dátumok a(z) „%(bom)s” verziónál. Átfedik a(z) „%(version)s” "
+"verzió dátumait."
+
+#, python-format
+msgctxt "model:ir.message,text:msg_versions"
+msgid "%(version)s\\'s versions"
+msgstr "%(version)s verziói"
+
+msgctxt "model:ir.ui.menu,name:menu_version_list"
+msgid "BOMs Versions"
+msgstr "Darabjegyzék-verziók"
+
+msgctxt "model:production.bom.new.version.start,name:"
+msgid "New Version Start"
+msgstr "Új verzió – Kezdés"
+
+msgctxt "view:production.bom.new.version.start:"
+msgid "Enter the date which new version will be effective:"
+msgstr "Adja meg az új verzió hatálybalépésének dátumát:"
+
+msgctxt "view:production.bom.new.version.start:"
+msgid "Modification Made"
+msgstr "Módosítás történt"
+
+msgctxt "view:production.bom.new.version.start:"
+msgid "Reason for Change"
+msgstr "Módosítás oka"
+
+msgctxt "view:production.bom:"
+msgid "Additional Information"
+msgstr "További információk"
+
+msgctxt "view:production.bom:"
+msgid "Modification Made"
+msgstr "Módosítás történt"
+
+msgctxt "view:production.bom:"
+msgid "Reason for Change"
+msgstr "Módosítás oka"
+
+msgctxt "wizard_button:production.bom.new.version,start,create_:"
+msgid "Create"
+msgstr "Létrehozás"
+
+msgctxt "wizard_button:production.bom.new.version,start,end:"
+msgid "Cancel"
+msgstr "Mégse"
+
+msgctxt "field:production,bom_valid:"
+msgid "Bom Valid"
+msgstr "Érvényes darabjegyzék"
+
+#, python-format
+msgctxt "model:ir.message,text:msg_bom_expired_date"
+msgid "Production \"%(production)s\" has BOM \"%(bom)s\" with expired dates."
+msgstr "A(z) „%(production)s” gyártás „%(bom)s” darabjegyzéke lejárt."
