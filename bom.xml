@@ -64,4 +64,14 @@
         </record>
 
     </data>
+    <data>
+        <record model="ir.action-res.group" id="bom_versions_group_production">
+            <field name="action" ref="wizard_bom_versions"/>
+            <field name="group" ref="production.group_production"/>
+        </record>
+        <record model="ir.action-res.group" id="new_version_group_production_admin">
+            <field name="action" ref="wizard_new_version"/>
+            <field name="group" ref="production.group_production_admin"/>
+        </record>
+    </data>
 </tryton>
