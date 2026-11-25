@@ -1,0 +1,128 @@
+#
+msgid ""
+msgstr ""
+"Language: km\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgctxt "field:production.bom,end_date:"
+msgid "End Date"
+msgstr "កាលបរិច្ឆេទបញ្ចប់"
+
+msgctxt "field:production.bom,master_bom:"
+msgid "BOM"
+msgstr "បញ្ជីសម្ភារៈ (BOM)"
+
+msgctxt "field:production.bom,modification_made:"
+msgid "Modification Made"
+msgstr "ការកែប្រែដែលបានធ្វើ"
+
+msgctxt "field:production.bom,reason_change:"
+msgid "Reason for Change"
+msgstr "មូលហេតុនៃការផ្លាស់ប្តូរ"
+
+msgctxt "field:production.bom,start_date:"
+msgid "Start Date"
+msgstr "កាលបរិច្ឆេទចាប់ផ្តើម"
+
+msgctxt "field:production.bom,version:"
+msgid "Version"
+msgstr "កំណែ"
+
+msgctxt "field:production.bom.new.version.start,date:"
+msgid "Date"
+msgstr "កាលបរិច្ឆេទ"
+
+msgctxt "field:production.bom.new.version.start,modification_made:"
+msgid "Modification Made"
+msgstr "ការកែប្រែដែលបានធ្វើ"
+
+msgctxt "field:production.bom.new.version.start,reason_change:"
+msgid "Reason for Change"
+msgstr "មូលហេតុនៃការផ្លាស់ប្តូរ"
+
+msgctxt "model:ir.action,name:act_version_list"
+msgid "BOMs Versions"
+msgstr "កំណែបញ្ជីសម្ភារៈ (BOM)"
+
+msgctxt "model:ir.action,name:wizard_bom_versions"
+msgid "Versions"
+msgstr "កំណែ"
+
+msgctxt "model:ir.action,name:wizard_new_version"
+msgid "New Version"
+msgstr "កំណែថ្មី"
+
+msgctxt "model:ir.message,text:msg_bom_end_date_check"
+msgid "End date must be greater than start date."
+msgstr "កាលបរិច្ឆេទបញ្ចប់ត្រូវនៅក្រោយកាលបរិច្ឆេទចាប់ផ្ដើម។"
+
+msgctxt "model:ir.message,text:msg_bom_report_code_uniq"
+msgid "Version must be unique per BOM."
+msgstr "កំណែត្រូវតែមានតែមួយគត់ក្នុងបញ្ជីសម្ភារៈ (BOM) នីមួយៗ។"
+
+#, python-format
+msgctxt "model:ir.message,text:msg_invalid_dates"
+msgid ""
+"Invalid dates for version \"%(bom)s\". They overlap with version "
+"\"%(version)s."
+msgstr ""
+"កាលបរិច្ឆេទសម្រាប់កំណែ «%(bom)s» មិនត្រឹមត្រូវទេ ព្រោះវាត្រួតគ្នាជាមួយកំណែ "
+"«%(version)s»។"
+
+#, python-format
+msgctxt "model:ir.message,text:msg_versions"
+msgid "%(version)s\\'s versions"
+msgstr "កំណែនៃ %(version)s"
+
+msgctxt "model:ir.ui.menu,name:menu_version_list"
+msgid "BOMs Versions"
+msgstr "កំណែបញ្ជីសម្ភារៈ (BOM)"
+
+msgctxt "model:production.bom.new.version.start,name:"
+msgid "New Version Start"
+msgstr "ចាប់ផ្ដើមបង្កើតកំណែថ្មី"
+
+msgctxt "view:production.bom.new.version.start:"
+msgid "Enter the date which new version will be effective:"
+msgstr "បញ្ចូលកាលបរិច្ឆេទដែលកំណែថ្មីចូលជាធរមាន៖"
+
+msgctxt "view:production.bom.new.version.start:"
+msgid "Modification Made"
+msgstr "ការកែប្រែដែលបានធ្វើ"
+
+msgctxt "view:production.bom.new.version.start:"
+msgid "Reason for Change"
+msgstr "មូលហេតុនៃការផ្លាស់ប្តូរ"
+
+msgctxt "view:production.bom:"
+msgid "Additional Information"
+msgstr "ព័ត៌មានបន្ថែម"
+
+msgctxt "view:production.bom:"
+msgid "Modification Made"
+msgstr "ការកែប្រែដែលបានធ្វើ"
+
+msgctxt "view:production.bom:"
+msgid "Reason for Change"
+msgstr "មូលហេតុនៃការផ្លាស់ប្តូរ"
+
+msgctxt "wizard_button:production.bom.new.version,start,create_:"
+msgid "Create"
+msgstr "បង្កើត"
+
+msgctxt "wizard_button:production.bom.new.version,start,end:"
+msgid "Cancel"
+msgstr "បោះបង់"
+
+msgctxt "field:production,bom_valid:"
+msgid "Bom Valid"
+msgstr "បញ្ជីសម្ភារៈ (BOM) មានសុពលភាព"
+
+#, python-format
+msgctxt "model:ir.message,text:msg_bom_expired_date"
+msgid "Production \"%(production)s\" has BOM \"%(bom)s\" with expired dates."
+msgstr ""
+"ផលិតកម្ម «%(production)s» ប្រើបញ្ជីសម្ភារៈ (BOM) «%(bom)s» ដែលផុតកំណត់។"
